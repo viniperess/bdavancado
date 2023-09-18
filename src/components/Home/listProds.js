@@ -23,7 +23,7 @@ function ListProds(props) {
 
     useEffect(() => {
         loadProdsFb()
-    },[order])
+    }, [order, filter])
 
     function loadProdsFb() {
         getOrderByChild(order, props.firebase.db, receiveProds)
@@ -33,7 +33,8 @@ function ListProds(props) {
     function receiveProds(snap) {
         if (snap.exists()) {
             prods.push({ 'id': snap.key, ...snap.val() })
-            setData([...prods])
+            console.log({ "produto": { 'id': snap.key, ...snap.val() } })
+            prods.length?setData([...prods]):setLoad(false)
         }
     }
 
@@ -46,27 +47,24 @@ function ListProds(props) {
     }
 
     const handlerApplyFilter = () => {
-        prods.length = 0;
-        setData([...prods])
+        setData([])
         setInterval(() => setLoad(false), 3000)
         const termo = document.getElementById('termo').value
         getFilterByChild(filter, termo, props.firebase.db, receiveProds)
     }
 
-    const handlerMostExpensive = () =>
+    const handlerMostExpensive = () => {
         setData([])
-        getMostExpensive(props.firebase.db, setData)
+        getMostExpensive(props.firebase.db, setData, prods)
     }
 
     const handlerMostCheap = () => {
-        prods.length = 0;
-        setData([...prods])
+        setData([])
         getMostCheap(props.firebase.db, receiveProds)
     }
 
     const handlerPriceRange = (event) => {
-        prods.length = 0;
-        setData([...prods])
+        setData([])
         setPriceRange(event.target.value)
         if (event.target.value === 0) setLoad(false)
         getPriceRange(event.target.value, props.firebase.db, receiveProds)
@@ -103,7 +101,7 @@ function ListProds(props) {
                     value={priceRange}
                     max='20000'
                     min='10'
-                    step='10'
+                    step='.01'
                     onChange={handlerPriceRange}
                 />
                 &nbsp;{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(priceRange)}
