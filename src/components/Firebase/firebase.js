@@ -43,7 +43,7 @@ class Firebase {
             /**
             Quando o usuário estiver logado atribua o valor TRUE
             ao atributo this.isLogged e as credenciais ao atributo this.credentials
-            deverá retornar a propriedade user do atributo this.credentials
+            deverá retornar a propriedade user do atributo this.credentials.user
             */
            //implemente aqui função logar o usuario
            throw new Error("Função Indisponível!!") //remova essa linha
