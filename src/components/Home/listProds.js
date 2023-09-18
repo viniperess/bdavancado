@@ -53,10 +53,9 @@ function ListProds(props) {
         getFilterByChild(filter, termo, props.firebase.db, receiveProds)
     }
 
-    const handlerMostExpensive = () => {
-        prods.length = 0;
-        setData([...prods])
-        getMostExpensive(props.firebase.db, setData, prods)
+    const handlerMostExpensive = () =>
+        setData([])
+        getMostExpensive(props.firebase.db, setData)
     }
 
     const handlerMostCheap = () => {
@@ -70,7 +69,7 @@ function ListProds(props) {
         setData([...prods])
         setPriceRange(event.target.value)
         if (event.target.value === 0) setLoad(false)
-        getPriceRange(priceRange, props.firebase.db, receiveProds)
+        getPriceRange(event.target.value, props.firebase.db, receiveProds)
     }
 
     return (<div className='flex-container'>
