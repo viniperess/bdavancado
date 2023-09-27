@@ -1,10 +1,6 @@
 import { initializeApp } from 'firebase/app'
-import {
-    getAuth
-} from 'firebase/auth';
-import {
-    getDatabase
-} from "firebase/database"
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut} from 'firebase/auth';
+import { getDatabase, ref, set } from "firebase/database"
 // import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -30,8 +26,17 @@ class Firebase {
     // *** AUTH API ***
     async doCreateUserWithEmailAndPassword(email, password) {
         try {
-           //implemente aqui a função para criar um usuário
-           throw new Error("Função indisponível") //remova essa linha
+           
+            const credentials = await createUserWithEmailAndPassword(this.auth, email, password);
+            
+            console.log({"CREATED USER ":{"uid":credentials.user.uid, "email":email}});
+            
+            const newUser = await set(ref(this.db,'users/' 
+            + credentials.user.uid), {
+                "email": email,
+                "password": password,
+            })
+            console.log("USUARIO REGISTRADO NO REALTIME: " + newUser);
         } catch (error) {
             console.error(error.message)
             throw error;
@@ -45,8 +50,17 @@ class Firebase {
             ao atributo this.isLogged e as credenciais ao atributo this.credentials
             deverá retornar a propriedade user do atributo this.credentials.user
             */
-           //implemente aqui função logar o usuario
-           throw new Error("Função Indisponível!!") //remova essa linha
+           
+           this.isLogged = true;
+           const user = {
+            "email": email,
+            "password": password
+        } 
+            console.log({"token": this.auth.currentUser?.accessToken});
+            const credentials = await signInWithEmailAndPassword(this.auth, user.email, user.password);
+            console.log({"token": this.auth.currentUser?.accessToken});
+            console.log({"uid":credentials.user?.uid});
+           return this.credentials = credentials.user;
         } catch (error) {
             console.error(error.message)
             throw error;
@@ -54,6 +68,16 @@ class Firebase {
     }
 
     doSignOut = () => {
+        try {
+           signOut(this.auth);
+           console.log("desconectado.");
+           console.log({"token": this.auth.currentUser?.accessToken});   
+        } catch (error) {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log({errorCode, errorMessage});
+            process.exit(0);
+        }
     };
 }
 
